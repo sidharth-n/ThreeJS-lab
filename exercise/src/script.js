@@ -7,8 +7,8 @@ const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 const sizes = {
-  height: 600,
-  width: 800,
+  height: window.innerHeight,
+  width: window.innerWidth,
 };
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
@@ -20,5 +20,14 @@ const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector(".webgl"),
 });
 renderer.setSize(sizes.width, sizes.height);
+const clock = new THREE.Clock();
 
-renderer.render(scene, camera);
+const rotate = () => {
+  const elapsedTime = clock.getElapsedTime();
+  console.log(elapsedTime);
+  cube.rotation.y = elapsedTime * 2;
+  renderer.render(scene, camera);
+  requestAnimationFrame(rotate);
+};
+
+rotate();
