@@ -78,7 +78,7 @@ texture.center.y = 0.5; */
 texture.generateMipmaps = false; */
 const geometry = new THREE.SphereGeometry(0.5, 36, 36);
 /* const material = new THREE.MeshBasicMaterial({
-  map: doorColorTexture,
+  map: doorColorTextrelativeure,
   wireframe: false,
 }); */
 const material = new THREE.MeshMatcapMaterial();

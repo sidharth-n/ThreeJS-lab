@@ -10,6 +10,7 @@
   top: 0;
   left: 0;
   outline: none;
+  z-index: 1;
 }
 
 html,
@@ -19,8 +20,17 @@ body {
 }
 
 .zoom {
-  position: absolute;
-  top: 2;
+  position: fixed;
+  top: 20px;
+  left: 16%;
   z-index: 2;
-  color: aqua;
+  color: rgb(224, 148, 33);
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  letter-spacing: 2px;
 }
