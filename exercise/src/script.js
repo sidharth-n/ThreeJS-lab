@@ -20,6 +20,15 @@ window.addEventListener("mousemove", (event) => {
   cursor.x = event.clientX / sizes.width - 0.5;
   cursor.y = event.clientY / sizes.height - 0.5;
 });
+
+window.addEventListener("resize", (event) => {
+  sizes.height = window.innerHeight;
+  sizes.width = window.innerWidth;
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+});
+
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
