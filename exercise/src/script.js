@@ -46,6 +46,7 @@ const scene = new THREE.Scene();
 const textureLoader = new THREE.TextureLoader();
 const doorAlphaTexture = textureLoader.load("./textures/door/alpha.jpg");
 const doorColorTexture = textureLoader.load("./textures/extra/coin.png");
+const mapTexture = textureLoader.load("./textures/extra/map.png");
 const doorHeightTexture = textureLoader.load("./textures/door/height.jpg");
 const doorAmbientOcclusionTexture = textureLoader.load(
   "./textures/door/ambientOcclusion.jpg"
@@ -57,7 +58,8 @@ const doorRoughnessTexture = textureLoader.load(
 const doorMetalnessTexture = textureLoader.load(
   "./textures/door/metalness.jpg"
 );
-const matCapTexture = textureLoader.load("./textures/matcaps/3.png");
+const matCapTexture = textureLoader.load("./textures/matcaps/8.png");
+const earthMatCapTexture = textureLoader.load("./textures/matcaps/2.png");
 const gradientTexture = textureLoader.load("./textures/gradients/3.jpg");
 /* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
@@ -83,22 +85,37 @@ const material = new THREE.MeshMatcapMaterial();
 material.matcap = matCapTexture;
 material.map = doorColorTexture;
 
+const earthMaterial = new THREE.MeshMatcapMaterial();
+earthMaterial.matcap = earthMatCapTexture;
+earthMaterial.map = mapTexture;
+
 material.side = THREE.DoubleSide;
 //material.wireframe = true;
 //material.flatShading = true;
 
-const sphere = new THREE.Mesh(geometry, material);
+const sphere = new THREE.Mesh(geometry, earthMaterial);
 const torus = new THREE.Mesh(
   new THREE.TorusGeometry(0.3, 0.2, 36, 32),
   material
 );
 const plane = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 1, 32), material);
-scene.add(sphere, torus, plane);
+scene.add(sphere, plane);
 sphere.position.y = 1.5;
+sphere.position.x = 4;
 torus.position.y = -1.5;
+plane.position.y = -1.5;
 
-camera.position.z = 3;
+camera.position.z = 50;
+camera.position.y = 20;
+camera.position.x = 20;
 
+const ambientLight = new THREE.AmbientLight(0xffffffff, 0.5);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0xffffffff, 5);
+pointLight.position.z = 1;
+pointLight.position.y = 5;
+pointLight.position.x = 1;
+scene.add(pointLight);
 scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({
@@ -109,10 +126,18 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 
+const planeRadius = 4;
+
 const rotate = () => {
   const elapsedTime = clock.getElapsedTime();
-  sphere.rotation.y = elapsedTime * 2;
-  plane.rotation.y = elapsedTime * 3;
+
+  const angle = elapsedTime;
+  const sphereX = planeRadius * Math.cos(angle);
+  const sphereZ = planeRadius * Math.sin(angle);
+  sphere.position.set(sphereX, 0, sphereZ);
+
+  sphere.rotation.y = 2 * elapsedTime;
+  plane.rotation.y = -elapsedTime / 15;
   torus.rotation.y = elapsedTime * 4;
 
   /*   camera.position.x = -cursor.x * 10;

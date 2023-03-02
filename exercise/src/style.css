@@ -15,4 +15,12 @@
 html,
 body {
   overflow: hidden;
+  position: relative;
+}
+
+.zoom {
+  position: absolute;
+  top: 2;
+  z-index: 2;
+  color: aqua;
 }
