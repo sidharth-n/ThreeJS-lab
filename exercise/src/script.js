@@ -41,8 +41,20 @@ window.addEventListener("dblclick", () => {
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const count = 50;
+const positionArray = new Float32Array(count * 3 * 3);
+for (let i = 0; i < count * 3 * 3; i++) {
+  positionArray[i] = Math.random();
+}
+
+const positionAttributes = new THREE.BufferAttribute(positionArray, 3);
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute("position", positionAttributes);
+/* const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4); */
+const material = new THREE.MeshBasicMaterial({
+  color: 0xff0000,
+  wireframe: true,
+});
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
