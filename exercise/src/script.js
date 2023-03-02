@@ -34,17 +34,19 @@ scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
+  antialias: true,
 });
 renderer.setSize(sizes.width, sizes.height);
 const clock = new THREE.Clock();
 
 const rotate = () => {
-  /*  const elapsedTime = clock.getElapsedTime();
-  cube.rotation.y = elapsedTime * 2; */
+  const elapsedTime = clock.getElapsedTime();
+  //cube.rotation.y = elapsedTime * 2;
 
   /*   camera.position.x = -cursor.x * 10;
   camera.position.y = cursor.y * 10;
   camera.lookAt(cube.position); */
+  cube.material.color.setHSL(elapsedTime / 10, 0.5, 0.5);
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(rotate);
