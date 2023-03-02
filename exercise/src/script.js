@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import doorImage from "/home/sid/Desktop/ThreeJS-lab/exercise/static/door.jpg";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 const canvas = document.querySelector(".webgl");
 const cursor = {
@@ -41,19 +42,27 @@ window.addEventListener("dblclick", () => {
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
-const count = 50;
+
+const image = new Image();
+image.src = doorImage;
+const texture = new THREE.Texture(image);
+image.onload = () => {
+  texture.needsUpdate = true;
+};
+
+/* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
 for (let i = 0; i < count * 3 * 3; i++) {
-  positionArray[i] = Math.random();
+  positionArray[i] = Math.random() - 0.5;
 }
 
 const positionAttributes = new THREE.BufferAttribute(positionArray, 3);
 const geometry = new THREE.BufferGeometry();
-geometry.setAttribute("position", positionAttributes);
-/* const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4); */
+geometry.setAttribute("position", positionAttributes); */
+const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  wireframe: true,
+  map: texture,
+  wireframe: false,
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -77,7 +86,7 @@ const rotate = () => {
   /*   camera.position.x = -cursor.x * 10;
   camera.position.y = cursor.y * 10;
   camera.lookAt(cube.position); */
-  cube.material.color.setHSL(elapsedTime / 10, 0.5, 0.5);
+  //cube.material.color.setHSL(elapsedTime / 10, 0.5, 0.5);
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(rotate);
