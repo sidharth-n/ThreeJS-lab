@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import doorImage from "/home/sid/Desktop/ThreeJS-lab/exercise/static/door.jpg";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Texture } from "three";
 const canvas = document.querySelector(".webgl");
@@ -44,8 +43,22 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
 
-const texture = new THREE.TextureLoader().load(doorImage);
-
+const textureLoader = new THREE.TextureLoader();
+const doorAlphaTexture = textureLoader.load("./textures/door/alpha.jpg");
+const doorColorTexture = textureLoader.load("./textures/extra/coin.png");
+const doorHeightTexture = textureLoader.load("./textures/door/height.jpg");
+const doorAmbientOcclusionTexture = textureLoader.load(
+  "./textures/door/ambientOcclusion.jpg"
+);
+const doorNormalTexture = textureLoader.load("./textures/door/normal.jpg");
+const doorRoughnessTexture = textureLoader.load(
+  "./textures/door/roughness.jpg"
+);
+const doorMetalnessTexture = textureLoader.load(
+  "./textures/door/metalness.jpg"
+);
+const matCapTexture = textureLoader.load("./textures/matcaps/3.png");
+const gradientTexture = textureLoader.load("./textures/gradients/3.jpg");
 /* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
 for (let i = 0; i < count * 3 * 3; i++) {
@@ -56,17 +69,33 @@ const positionAttributes = new THREE.BufferAttribute(positionArray, 3);
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute("position", positionAttributes); */
 
-texture.rotation = Math.PI / 4;
+/* texture.rotation = Math.PI / 4;
 texture.center.x = 0.5;
-texture.center.y = 0.5;
-
-const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
-const material = new THREE.MeshBasicMaterial({
-  map: texture,
+texture.center.y = 0.5; */
+/* texture.magFilter = THREE.NearestFilter;
+texture.generateMipmaps = false; */
+const geometry = new THREE.SphereGeometry(0.5, 36, 36);
+/* const material = new THREE.MeshBasicMaterial({
+  map: doorColorTexture,
   wireframe: false,
-});
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+}); */
+const material = new THREE.MeshMatcapMaterial();
+material.matcap = matCapTexture;
+material.map = doorColorTexture;
+
+material.side = THREE.DoubleSide;
+//material.wireframe = true;
+//material.flatShading = true;
+
+const sphere = new THREE.Mesh(geometry, material);
+const torus = new THREE.Mesh(
+  new THREE.TorusGeometry(0.3, 0.2, 36, 32),
+  material
+);
+const plane = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 1, 32), material);
+scene.add(sphere, torus, plane);
+sphere.position.y = 1.5;
+torus.position.y = -1.5;
 
 camera.position.z = 3;
 
@@ -82,7 +111,9 @@ const clock = new THREE.Clock();
 
 const rotate = () => {
   const elapsedTime = clock.getElapsedTime();
-  //cube.rotation.y = elapsedTime * 2;
+  sphere.rotation.y = elapsedTime * 2;
+  plane.rotation.y = elapsedTime * 3;
+  torus.rotation.y = elapsedTime * 4;
 
   /*   camera.position.x = -cursor.x * 10;
   camera.position.y = cursor.y * 10;
