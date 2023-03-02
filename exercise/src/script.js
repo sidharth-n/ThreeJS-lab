@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import doorImage from "/home/sid/Desktop/ThreeJS-lab/exercise/static/door.jpg";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Texture } from "three";
 const canvas = document.querySelector(".webgl");
 const cursor = {
   x: 0,
@@ -43,12 +44,7 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
 
-const image = new Image();
-image.src = doorImage;
-const texture = new THREE.Texture(image);
-image.onload = () => {
-  texture.needsUpdate = true;
-};
+const texture = new THREE.TextureLoader().load(doorImage);
 
 /* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
@@ -59,6 +55,11 @@ for (let i = 0; i < count * 3 * 3; i++) {
 const positionAttributes = new THREE.BufferAttribute(positionArray, 3);
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute("position", positionAttributes); */
+
+texture.rotation = Math.PI / 4;
+texture.center.x = 0.5;
+texture.center.y = 0.5;
+
 const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 const material = new THREE.MeshBasicMaterial({
   map: texture,
