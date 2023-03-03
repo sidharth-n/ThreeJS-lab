@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Texture } from "three";
+import * as dat from "dat.gui";
 const canvas = document.querySelector(".webgl");
 const cursor = {
   x: 0,
@@ -16,6 +16,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
+
+const gui = new dat.GUI();
 
 window.addEventListener("mousemove", (event) => {
   cursor.x = event.clientX / sizes.width - 0.5;
@@ -44,9 +46,10 @@ controls.enableDamping = true;
 const scene = new THREE.Scene();
 
 const textureLoader = new THREE.TextureLoader();
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+
 const doorAlphaTexture = textureLoader.load("./textures/door/alpha.jpg");
-const doorColorTexture = textureLoader.load("./textures/extra/coin.png");
-const mapTexture = textureLoader.load("./textures/extra/map.png");
+const doorColorTexture = textureLoader.load("./textures/door/color.jpg");
 const doorHeightTexture = textureLoader.load("./textures/door/height.jpg");
 const doorAmbientOcclusionTexture = textureLoader.load(
   "./textures/door/ambientOcclusion.jpg"
@@ -58,9 +61,16 @@ const doorRoughnessTexture = textureLoader.load(
 const doorMetalnessTexture = textureLoader.load(
   "./textures/door/metalness.jpg"
 );
-const matCapTexture = textureLoader.load("./textures/matcaps/8.png");
-const earthMatCapTexture = textureLoader.load("./textures/matcaps/2.png");
+const matCapTexture = textureLoader.load("./textures/matcaps/4.png");
 const gradientTexture = textureLoader.load("./textures/gradients/3.jpg");
+const enivormentMapTexture = cubeTextureLoader.load([
+  "./textures/environmentMaps/0/px.jpg",
+  "./textures/environmentMaps/0/nx.jpg",
+  "./textures/environmentMaps/0/py.jpg",
+  "./textures/environmentMaps/0/ny.jpg",
+  "./textures/environmentMaps/0/pz.jpg",
+  "./textures/environmentMaps/0/nz.jpg",
+]);
 /* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
 for (let i = 0; i < count * 3 * 3; i++) {
@@ -78,45 +88,50 @@ texture.center.y = 0.5; */
 texture.generateMipmaps = false; */
 const geometry = new THREE.SphereGeometry(0.5, 36, 36);
 /* const material = new THREE.MeshBasicMaterial({
-  map: doorColorTextrelativeure,
+  map: doorColorTexture,
   wireframe: false,
 }); */
-const material = new THREE.MeshMatcapMaterial();
-material.matcap = matCapTexture;
+const material = new THREE.MeshStandardMaterial();
+/* material.matcap = matCapTexture;
 material.map = doorColorTexture;
-
-const earthMaterial = new THREE.MeshMatcapMaterial();
-earthMaterial.matcap = earthMatCapTexture;
-earthMaterial.map = mapTexture;
+material.aoMap = doorAmbientOcclusionTexture;
+material.aoMapIntensity = 1;
+material.normalMap = doorNormalTexture;
+material.normalScale.set(0.5, 0.5);
+material.displacementMap = doorHeightTexture;
+material.displacementScale = 0.5;
+material.metalnessMap = doorMetalnessTexture;
+material.roughnessMap = doorRoughnessTexture; */
+material.metalness = 0.7;
+material.roughness = 0.2;
+material.envMap = enivormentMapTexture;
+gui.add(material, "metalness").min(0).max(1).step(0.0001);
+gui.add(material, "roughness").min(0).max(1).step(0.0001);
 
 material.side = THREE.DoubleSide;
 //material.wireframe = true;
 //material.flatShading = true;
 
-const sphere = new THREE.Mesh(geometry, earthMaterial);
+const sphere = new THREE.Mesh(geometry, material);
 const torus = new THREE.Mesh(
   new THREE.TorusGeometry(0.3, 0.2, 36, 32),
   material
 );
-const plane = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 1, 32), material);
-scene.add(sphere, plane);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+scene.add(sphere, torus, plane);
 sphere.position.y = 1.5;
-sphere.position.x = 4;
 torus.position.y = -1.5;
-plane.position.y = -1.5;
 
-camera.position.z = 50;
-camera.position.y = 20;
-camera.position.x = 20;
+camera.position.z = 3;
 
-const ambientLight = new THREE.AmbientLight(0xffffffff, 0.5);
-scene.add(ambientLight);
-const pointLight = new THREE.PointLight(0xffffffff, 5);
-pointLight.position.z = 1;
-pointLight.position.y = 5;
-pointLight.position.x = 1;
-scene.add(pointLight);
 scene.add(camera);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 0.5);
+pointLight.position.set(5, 10, 5);
+scene.add(pointLight);
 
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
@@ -126,18 +141,10 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 
-const planeRadius = 4;
-
 const rotate = () => {
   const elapsedTime = clock.getElapsedTime();
-
-  const angle = elapsedTime;
-  const sphereX = planeRadius * Math.cos(angle);
-  const sphereZ = planeRadius * Math.sin(angle);
-  sphere.position.set(sphereX, 0, sphereZ);
-
-  sphere.rotation.y = 2 * elapsedTime;
-  plane.rotation.y = -elapsedTime / 15;
+  sphere.rotation.y = elapsedTime * 2;
+  plane.rotation.y = elapsedTime * 3;
   torus.rotation.y = elapsedTime * 4;
 
   /*   camera.position.x = -cursor.x * 10;
