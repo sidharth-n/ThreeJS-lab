@@ -47,9 +47,12 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
 const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
+//scene.add(axesHelper);
+
+const textureLoader = new THREE.TextureLoader();
+const matCapTexture = textureLoader.load("./textures/matcaps/8.png");
+
 const fontLoader = new FontLoader();
-let text = "";
 fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
   const textGeometry = new TextGeometry("StoryBrain", {
     font: font,
@@ -63,15 +66,31 @@ fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
     bevelSegments: 4,
   });
   textGeometry.center();
-  const textMaterial = new THREE.MeshBasicMaterial({
-    wireframe: true,
+  const textMaterial = new THREE.MeshMatcapMaterial({
+    wireframe: false,
   });
-  text = new THREE.Mesh(textGeometry, textMaterial);
+  textMaterial.matcap = matCapTexture;
+  const text = new THREE.Mesh(textGeometry, textMaterial);
   scene.add(text);
 });
+console.time("donuts");
+const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matCapTexture });
+for (let i = 0; i < 1000; i++) {
+  const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+  scene.add(donut);
+  donut.position.x = (Math.random() - 0.5) * 10;
+  donut.position.y = (Math.random() - 0.5) * 10;
+  donut.position.z = (Math.random() - 0.5) * 10;
 
+  donut.rotation.x = Math.random() * Math.PI;
+  donut.rotation.y = Math.random() * Math.PI;
+
+  const scale = Math.random();
+  donut.scale.set(scale, scale, scale);
+}
+console.timeEnd("donuts");
 /* 
-const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 
 const doorAlphaTexture = textureLoader.load("./textures/door/alpha.jpg");
@@ -156,7 +175,7 @@ const clock = new THREE.Clock();
 
 const rotate = () => {
   const elapsedTime = clock.getElapsedTime();
-  text.rotation.y = elapsedTime * 2;
+
   /*   sphere.rotation.y = elapsedTime * 2;
   plane.rotation.y = elapsedTime * 3;
   torus.rotation.y = elapsedTime * 4; */
