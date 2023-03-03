@@ -50,7 +50,8 @@ const axesHelper = new THREE.AxesHelper();
 //scene.add(axesHelper);
 
 const textureLoader = new THREE.TextureLoader();
-const matCapTexture = textureLoader.load("./textures/matcaps/8.png");
+const matCapTexture = textureLoader.load("./textures/matcaps/3.png");
+const earthMapTexture = textureLoader.load("./textures/extra/map.png");
 
 const fontLoader = new FontLoader();
 fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
@@ -68,28 +69,30 @@ fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
   textGeometry.center();
   const textMaterial = new THREE.MeshMatcapMaterial({
     wireframe: false,
+    color: new THREE.Color("lightblue"),
   });
   textMaterial.matcap = matCapTexture;
   const text = new THREE.Mesh(textGeometry, textMaterial);
   scene.add(text);
 });
 console.time("donuts");
-const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
-const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matCapTexture });
+const donutGeometry = new THREE.SphereGeometry(0.3, 20, 20);
+const donutMaterial = new THREE.MeshMatcapMaterial({
+  matcap: matCapTexture,
+  map: earthMapTexture,
+});
 for (let i = 0; i < 1000; i++) {
   const donut = new THREE.Mesh(donutGeometry, donutMaterial);
   scene.add(donut);
-  donut.position.x = (Math.random() - 0.5) * 10;
-  donut.position.y = (Math.random() - 0.5) * 10;
-  donut.position.z = (Math.random() - 0.5) * 10;
+  donut.position.x = (Math.random() - 0.5) * 15;
+  donut.position.y = (Math.random() - 0.5) * 15;
+  donut.position.z = (Math.random() - 0.5) * 15;
 
-  donut.rotation.x = Math.random() * Math.PI;
-  donut.rotation.y = Math.random() * Math.PI;
-
-  const scale = Math.random();
+  const scale = Math.random() * 1;
   donut.scale.set(scale, scale, scale);
 }
 console.timeEnd("donuts");
+
 /* 
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 
@@ -154,15 +157,16 @@ material.roughnessMap = doorRoughnessTexture; */
 //material.wireframe = true;
 //material.flatShading = true;
 
-camera.position.z = 3;
-
+camera.position.z = 5;
+camera.position.y = 1;
+camera.position.x = 3;
 scene.add(camera);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 0.5);
-pointLight.position.set(5, 10, 5);
+pointLight.position.set(5, 10, 50);
 scene.add(pointLight);
 
 const renderer = new THREE.WebGLRenderer({
