@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import * as dat from "dat.gui";
 const canvas = document.querySelector(".webgl");
 const cursor = {
@@ -44,7 +46,31 @@ window.addEventListener("dblclick", () => {
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const scene = new THREE.Scene();
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper);
+const fontLoader = new FontLoader();
+let text = "";
+fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
+  const textGeometry = new TextGeometry("StoryBrain", {
+    font: font,
+    size: 0.5,
+    height: 0.2,
+    curveSegments: 5,
+    bevelEnabled: true,
+    bevelThickness: 0.01,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 4,
+  });
+  textGeometry.center();
+  const textMaterial = new THREE.MeshBasicMaterial({
+    wireframe: true,
+  });
+  text = new THREE.Mesh(textGeometry, textMaterial);
+  scene.add(text);
+});
 
+/* 
 const textureLoader = new THREE.TextureLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 
@@ -70,7 +96,7 @@ const enivormentMapTexture = cubeTextureLoader.load([
   "./textures/environmentMaps/0/ny.jpg",
   "./textures/environmentMaps/0/pz.jpg",
   "./textures/environmentMaps/0/nz.jpg",
-]);
+]); */
 /* const count = 500;
 const positionArray = new Float32Array(count * 3 * 3);
 for (let i = 0; i < count * 3 * 3; i++) {
@@ -86,12 +112,12 @@ texture.center.x = 0.5;
 texture.center.y = 0.5; */
 /* texture.magFilter = THREE.NearestFilter;
 texture.generateMipmaps = false; */
-const geometry = new THREE.SphereGeometry(0.5, 36, 36);
+
 /* const material = new THREE.MeshBasicMaterial({
   map: doorColorTexture,
   wireframe: false,
 }); */
-const material = new THREE.MeshStandardMaterial();
+
 /* material.matcap = matCapTexture;
 material.map = doorColorTexture;
 material.aoMap = doorAmbientOcclusionTexture;
@@ -102,25 +128,12 @@ material.displacementMap = doorHeightTexture;
 material.displacementScale = 0.5;
 material.metalnessMap = doorMetalnessTexture;
 material.roughnessMap = doorRoughnessTexture; */
-material.metalness = 0.7;
-material.roughness = 0.2;
-material.envMap = enivormentMapTexture;
-gui.add(material, "metalness").min(0).max(1).step(0.0001);
-gui.add(material, "roughness").min(0).max(1).step(0.0001);
 
-material.side = THREE.DoubleSide;
+//material.envMap = enivormentMapTexture;
+
+//material.side = THREE.DoubleSide;
 //material.wireframe = true;
 //material.flatShading = true;
-
-const sphere = new THREE.Mesh(geometry, material);
-const torus = new THREE.Mesh(
-  new THREE.TorusGeometry(0.3, 0.2, 36, 32),
-  material
-);
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
-scene.add(sphere, torus, plane);
-sphere.position.y = 1.5;
-torus.position.y = -1.5;
 
 camera.position.z = 3;
 
@@ -143,9 +156,10 @@ const clock = new THREE.Clock();
 
 const rotate = () => {
   const elapsedTime = clock.getElapsedTime();
-  sphere.rotation.y = elapsedTime * 2;
+  text.rotation.y = elapsedTime * 2;
+  /*   sphere.rotation.y = elapsedTime * 2;
   plane.rotation.y = elapsedTime * 3;
-  torus.rotation.y = elapsedTime * 4;
+  torus.rotation.y = elapsedTime * 4; */
 
   /*   camera.position.x = -cursor.x * 10;
   camera.position.y = cursor.y * 10;
