@@ -66,6 +66,7 @@ fontLoader.load("./fonts/helvetiker_regular.typeface.json", (font) => {
     bevelOffset: 0,
     bevelSegments: 4,
   });
+
   textGeometry.center();
   const textMaterial = new THREE.MeshMatcapMaterial({
     wireframe: false,
