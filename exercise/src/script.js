@@ -156,7 +156,7 @@ scene.add(graves);
 
 const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.2);
 const graveMaterial = new THREE.MeshStandardMaterial({
-  color: new THREE.Color("brown"),
+  color: new THREE.Color("#727272"),
 });
 
 for (let i = 0; i < 50; i++) {
@@ -168,6 +168,7 @@ for (let i = 0; i < 50; i++) {
   grave.position.set(x, 0.37, z);
   grave.rotation.y = (Math.random() - 0.5) * 0.4;
   grave.rotation.z = (Math.random() - 0.5) * 0.4;
+  grave.castShadow = true;
   graves.add(grave);
 }
 
@@ -245,6 +246,7 @@ window.addEventListener("resize", () => {
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor("#262837");
+  renderer.shadowMap.enabled = true;
 });
 
 /**
@@ -275,6 +277,23 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor("#262837");
+
+//shadows
+
+renderer.shadowMap.enabled = true;
+moonLight.castShadow = true;
+doorLight.castShadow = true;
+ghost1.castShadow = true;
+ghost2.castShadow = true;
+ghost3.castShadow = true;
+
+walls.castShadow = true;
+bush1.castShadow = true;
+bush2.castShadow = true;
+bush3.castShadow = true;
+bush4.castShadow = true;
+
+floor.receiveShadow = true;
 
 /**
  * Animate
