@@ -1,12 +1,32 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
+import bgm from "./bgm.mp3";
 
 /**
  * Base
  */
 // Debug
-const gui = new dat.GUI();
+//const gui = new dat.GUI();
+
+//music controls
+
+const playBtn = document.querySelector(".play");
+const pauseBtn = document.querySelector(".mute");
+const background = new Audio(bgm);
+background.loop = true;
+
+pauseBtn.addEventListener("click", () => {
+  background.play();
+  pauseBtn.style.display = "none";
+  playBtn.style.display = "block";
+});
+
+playBtn.addEventListener("click", () => {
+  background.pause();
+  pauseBtn.style.display = "block";
+  playBtn.style.display = "none";
+});
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -16,7 +36,7 @@ const scene = new THREE.Scene();
 
 //fog
 
-const fog = new THREE.Fog("#262837", 2, 15);
+const fog = new THREE.Fog("#262837", 1, 15);
 scene.fog = fog;
 
 /**
@@ -176,6 +196,7 @@ for (let i = 0; i < 50; i++) {
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(20, 20),
   new THREE.MeshStandardMaterial({
+    side: THREE.DoubleSide,
     map: grassColorTexture,
     transparent: true,
     aoMap: grassAmbientOcclusionTexture,
@@ -259,9 +280,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = 4;
-camera.position.y = 2;
-camera.position.z = 5;
+camera.position.x = Math.PI;
+camera.position.y = Math.PI * 2;
+camera.position.z = Math.PI * 3;
 scene.add(camera);
 
 // Controls
