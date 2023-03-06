@@ -197,16 +197,16 @@ scene.add(floor);
  */
 // Ambient light
 const ambientLight = new THREE.AmbientLight("#b9d5ff", 0.12);
-gui.add(ambientLight, "intensity").min(0).max(1).step(0.001);
+//gui.add(ambientLight, "intensity").min(0).max(1).step(0.001);
 scene.add(ambientLight);
 
 // Directional light
 const moonLight = new THREE.DirectionalLight("#b9d5ff", 0.12);
 moonLight.position.set(4, 5, -2);
-gui.add(moonLight, "intensity").min(0).max(1).step(0.001);
+/* gui.add(moonLight, "intensity").min(0).max(1).step(0.001);
 gui.add(moonLight.position, "x").min(-5).max(5).step(0.001);
 gui.add(moonLight.position, "y").min(-5).max(5).step(0.001);
-gui.add(moonLight.position, "z").min(-5).max(5).step(0.001);
+gui.add(moonLight.position, "z").min(-5).max(5).step(0.001); */
 scene.add(moonLight);
 
 //doorlight
@@ -281,6 +281,7 @@ renderer.setClearColor("#262837");
 //shadows
 
 renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 moonLight.castShadow = true;
 doorLight.castShadow = true;
 ghost1.castShadow = true;
@@ -295,6 +296,22 @@ bush4.castShadow = true;
 
 floor.receiveShadow = true;
 
+doorLight.shadow.mapSize.width = 256;
+doorLight.shadow.mapSize.height = 256;
+doorLight.shadow.camera.far = 7;
+
+ghost1.shadow.mapSize.width = 256;
+ghost1.shadow.mapSize.height = 256;
+ghost1.shadow.camera.far = 7;
+
+ghost2.shadow.mapSize.width = 256;
+ghost2.shadow.mapSize.height = 256;
+ghost2.shadow.camera.far = 7;
+
+ghost3.shadow.mapSize.width = 256;
+ghost3.shadow.mapSize.height = 256;
+ghost3.shadow.camera.far = 7;
+
 /**
  * Animate
  */
@@ -302,15 +319,15 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  const ghost1angle = elapsedTime * 0.9;
-  ghost1.position.x = Math.cos(ghost1angle) * 4;
-  ghost1.position.z = Math.sin(ghost1angle) * 4;
+  const ghost1Angle = elapsedTime * 0.5;
+  ghost1.position.x = Math.cos(ghost1Angle) * 4;
+  ghost1.position.z = Math.sin(ghost1Angle) * 4;
   ghost1.position.y = Math.sin(elapsedTime * 3);
 
-  const ghost2angle = -elapsedTime * 0.32;
-  ghost2.position.x = Math.cos(ghost2angle) * 4;
-  ghost2.position.z = Math.sin(ghost2angle) * 4;
-  ghost2.position.y = Math.sin(elapsedTime * 3) + Math.sin(elapsedTime * 2.5);
+  const ghost2Angle = -elapsedTime * 0.32;
+  ghost2.position.x = Math.cos(ghost2Angle) * 5;
+  ghost2.position.z = Math.sin(ghost2Angle) * 5;
+  ghost2.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5);
 
   const ghost3Angle = -elapsedTime * 0.18;
   ghost3.position.x =
