@@ -1,37 +1,19 @@
-* {
-  margin: 0;
-  padding: 0;
+*
+{
+    margin: 0;
+    padding: 0;
 }
 
 html,
-body {
-  overflow: hidden;
-  position: relative;
+body
+{
+    overflow: hidden;
 }
 
-.webgl {
-  position: fixed;
-  top: 0;
-  left: 0;
-  outline: none;
-  z-index: 1;
-  position: relative;
-}
-
-.sound {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-}
-
-.vol {
-  stroke-width: 2px;
-  height: 26px;
-  width: 26px;
-  stroke: #fff;
-}
-
-.play {
-  display: none;
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
 }
