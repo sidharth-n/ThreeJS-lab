@@ -16,10 +16,16 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 //models
-
+let mixer = null;
 const gltfLoader = new GLTFLoader();
-gltfLoader.load("./models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
+gltfLoader.load("./models/Fox/glTF/Fox.gltf", (gltf) => {
+  mixer = new THREE.AnimationMixer(gltf.scene);
+  const action = mixer.clipAction(gltf.animations[2]);
+  action.play();
   scene.add(gltf.scene);
+  gltf.scene.scale.set(0.025, 0.025, 0.025);
+
+  console.log(gltf.scene);
 });
 
 /**
@@ -86,7 +92,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(2, 2, 2);
+camera.position.set(5, 1, 5);
 scene.add(camera);
 
 // Controls
@@ -115,6 +121,9 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
   const deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
+  if (mixer) {
+    mixer.update(deltaTime * 2);
+  }
 
   // Update controls
   controls.update();
