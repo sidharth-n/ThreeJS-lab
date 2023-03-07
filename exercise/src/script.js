@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-
+import bgm from "./bgm.mp3";
 /**
  * Base
  */
@@ -26,6 +26,10 @@ run.addEventListener("click", () => {
     action = mixer.clipAction(newClip);
     action.play();
   }
+  const music = new Audio(bgm);
+  music.play();
+  music.loop = true;
+  console.log(music);
 });
 
 walk.addEventListener("click", () => {
