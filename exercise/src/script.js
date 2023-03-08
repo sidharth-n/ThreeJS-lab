@@ -152,6 +152,7 @@ const floor = new THREE.Mesh(
     aoMap: grassAmbientOcclusionTexture,
     normalMap: grassNormalTexture,
     roughnessMap: grassRoughnessTexture,
+    side: THREE.DoubleSide,
   })
 );
 floor.receiveShadow = true;
