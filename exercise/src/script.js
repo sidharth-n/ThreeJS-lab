@@ -244,7 +244,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(5, 1, 5.6);
+
 //camera.position.set(0, 25, 0);
 scene.add(camera);
 
@@ -293,16 +293,38 @@ document.addEventListener("keyup", (event) => {
   }
 });
 
-// view with mouse
-const mouseMove = {};
-document.addEventListener("mousemove", (event) => {
-  mouseMove["x"] = event.movementX || 0;
-  mouseMove["y"] = event.movementY || 0;
-});
+// togglecamera
+
+let currentCamera = foxCamera;
+let relativeLookAtPosition;
+/* document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    if (currentCamera == foxCamera) {
+      currentCamera = camera;
+      currentCamera.position.copy(foxCamera.position);
+      currentCamera.lookAt(foxCamera.getWorldPosition(relativeLookAtPosition));
+    } else {
+      currentCamera = foxCamera;
+    }
+  }
+}); */
 
 // fox camera
 
 // Set up mouse event to change camera direction
+
+
+let previousMousePosition = {
+  x: 0,
+  y: 0
+};
+
+document.addEventListener("mousemove", (event) => {
+  const currentMousePosition = {
+    x: event.clientX,
+    y: event.clientY
+  };
+
 
 /**
  * Animate
@@ -320,25 +342,25 @@ const tick = () => {
 
   // Update controls
   controls.update();
-  // Render
-  renderer.render(scene, camera);
-  renderer.render(scene, foxCamera);
 
+  // Set foxCamera position and rotation relative to GLTF
   if (gltf) {
-    foxCamera.position.set(
-      gltf.scene.position.x,
-      gltf.scene.position.y + 4, // adjust the camera height to be above the model
-      gltf.scene.position.z + 5 // adjust the camera distance behind the model
+    const cameraOffset = new THREE.Vector3(0, 150, -150);
+    const relativeCameraOffset = cameraOffset.applyMatrix4(
+      gltf.scene.matrixWorld
     );
-    foxCamera.rotation.set(
-      gltf.scene.rotation.x * Math.PI,
-      -gltf.scene.rotation.y,
-      -gltf.scene.rotation.z
+    foxCamera.position.copy(relativeCameraOffset);
+
+    const lookAtPosition = gltf.scene.position.clone();
+    relativeLookAtPosition = lookAtPosition.applyMatrix4(
+      gltf.scene.matrixWorld
     );
-    foxCamera.lookAt(gltf.scene.position);
+    foxCamera.lookAt(relativeLookAtPosition);
   }
 
-  //foxCamera.lookAt(gltf.scene.position);
+  // Render
+  renderer.render(scene, currentCamera);
+  //renderer.render(scene, camera);w
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
@@ -348,17 +370,19 @@ const tick = () => {
   if (gltf) direction.applyQuaternion(gltf.scene.quaternion);
 
   if (keyboardState["w"]) {
-    gltf.scene.position.add(direction.clone().multiplyScalar(0.01));
+    gltf.scene.position.add(direction.clone().multiplyScalar(0.04));
   }
   if (keyboardState["s"]) {
-    gltf.scene.position.add(direction.clone().multiplyScalar(-0.01));
+    gltf.scene.position.add(direction.clone().multiplyScalar(-0.04));
   }
   if (keyboardState["a"]) {
-    gltf.scene.rotation.y += 0.01;
+    gltf.scene.rotation.y += 0.02;
   }
   if (keyboardState["d"]) {
-    gltf.scene.rotation.y -= 0.01;
+    gltf.scene.rotation.y -= 0.02;
   }
+
+  
 };
 
 tick();
