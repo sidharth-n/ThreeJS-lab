@@ -247,20 +247,26 @@ renderer.setClearColor("#262837");
 //fox move
 const keyboardState = {};
 document.addEventListener("keydown", (event) => {
+  keyboardState[event.key] = true;
+  if (animationIndex == 0) {
+    action.stop();
+  }
   animationIndex = 1;
   if (gltf && action) {
     const newClip = gltf.animations[animationIndex];
-    action.stop();
     action = mixer.clipAction(newClip);
     action.play();
   }
 });
 document.addEventListener("keyup", (event) => {
   keyboardState[event.key] = false;
+  if (animationIndex == 1) {
+    action.stop();
+  }
   animationIndex = 0;
   if (gltf && action) {
     const newClip = gltf.animations[animationIndex];
-    action.stop();
+
     action = mixer.clipAction(newClip);
     action.play();
   }
@@ -284,16 +290,15 @@ const tick = () => {
 
   // Update controls
   controls.update();
-
+  gltf.scene.position.update();
   // Render
   renderer.render(scene, camera);
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 
-  //keyboard update
+  //player move
 
-  // Update camera position based on keyboard input
   if (keyboardState["w"]) {
     gltf.scene.position.z += 0.01;
   }
