@@ -127,6 +127,21 @@ gltfLoader.load("./models/tree/pine-tree.gltf", (tree) => {
   tree.scene.position.set(4, 0, 6);
 });
 
+//fox camera
+const foxCamera = new THREE.PerspectiveCamera(
+  75, // field of view
+  window.innerWidth / window.innerHeight, // aspect ratio
+  0.1, // near plane
+  1000 // far plane
+);
+
+// Set the camera's initial position and rotation behind the model
+foxCamera.position.set(0, 5, -10);
+if (gltf) {
+  foxCamera.lookAt(gltf.scene.position);
+}
+scene.add(foxCamera);
+
 gltfLoader.load("./models/Fox/glTF/Fox.gltf", (loadedGltf) => {
   gltf = loadedGltf;
   mixer = new THREE.AnimationMixer(gltf.scene);
@@ -135,6 +150,12 @@ gltfLoader.load("./models/Fox/glTF/Fox.gltf", (loadedGltf) => {
   scene.add(gltf.scene);
   gltf.scene.scale.set(0.025, 0.025, 0.025);
   gltf.scene.castShadow = true;
+
+  /*   foxCamera.position.set(
+    gltf.scene.position.x + 10,
+    gltf.scene.position.y + 1, // adjust the camera height to be above the model
+    gltf.scene.position.z + 1 // adjust the camera distance behind the model
+  ); */
 });
 
 // Call the loadModel function again to reload the model and update the animation
@@ -259,10 +280,10 @@ document.addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("keyup", (event) => {
-  keyboardState[event.key] = false;
-  if (animationIndex == 1) {
+  if (animationIndex == 1 && keyboardState[event.key] == false) {
     action.stop();
   }
+  keyboardState[event.key] = false;
   animationIndex = 0;
   if (gltf && action) {
     const newClip = gltf.animations[animationIndex];
@@ -271,6 +292,15 @@ document.addEventListener("keyup", (event) => {
     action.play();
   }
 });
+
+// view with mouse
+const mouseMove = {};
+document.addEventListener("mousemove", (event) => {
+  mouseMove["x"] = event.movementX || 0;
+  mouseMove["y"] = event.movementY || 0;
+});
+
+// fox camera
 
 // Set up mouse event to change camera direction
 
@@ -290,20 +320,38 @@ const tick = () => {
 
   // Update controls
   controls.update();
-  gltf.scene.position.update();
   // Render
   renderer.render(scene, camera);
+  renderer.render(scene, foxCamera);
+
+  if (gltf) {
+    foxCamera.position.set(
+      gltf.scene.position.x,
+      gltf.scene.position.y + 4, // adjust the camera height to be above the model
+      gltf.scene.position.z + 5 // adjust the camera distance behind the model
+    );
+    foxCamera.rotation.set(
+      gltf.scene.rotation.x * Math.PI,
+      -gltf.scene.rotation.y,
+      -gltf.scene.rotation.z
+    );
+    foxCamera.lookAt(gltf.scene.position);
+  }
+
+  //foxCamera.lookAt(gltf.scene.position);
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 
   //player move
+  const direction = new THREE.Vector3(0, 0, 1);
+  if (gltf) direction.applyQuaternion(gltf.scene.quaternion);
 
   if (keyboardState["w"]) {
-    gltf.scene.position.z += 0.01;
+    gltf.scene.position.add(direction.clone().multiplyScalar(0.01));
   }
   if (keyboardState["s"]) {
-    gltf.scene.position.z -= 0.01;
+    gltf.scene.position.add(direction.clone().multiplyScalar(-0.01));
   }
   if (keyboardState["a"]) {
     gltf.scene.rotation.y += 0.01;
