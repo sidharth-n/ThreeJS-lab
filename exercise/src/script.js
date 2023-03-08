@@ -244,6 +244,30 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor("#262837");
 
+//fox move
+const keyboardState = {};
+document.addEventListener("keydown", (event) => {
+  animationIndex = 1;
+  if (gltf && action) {
+    const newClip = gltf.animations[animationIndex];
+    action.stop();
+    action = mixer.clipAction(newClip);
+    action.play();
+  }
+});
+document.addEventListener("keyup", (event) => {
+  keyboardState[event.key] = false;
+  animationIndex = 0;
+  if (gltf && action) {
+    const newClip = gltf.animations[animationIndex];
+    action.stop();
+    action = mixer.clipAction(newClip);
+    action.play();
+  }
+});
+
+// Set up mouse event to change camera direction
+
 /**
  * Animate
  */
@@ -255,7 +279,7 @@ const tick = () => {
   const deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
   if (mixer) {
-    mixer.update(deltaTime * 2);
+    mixer.update(deltaTime);
   }
 
   // Update controls
@@ -266,6 +290,120 @@ const tick = () => {
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
+
+  //keyboard update
+
+  // Update camera position based on keyboard input
+  if (keyboardState["w"]) {
+    gltf.scene.position.z += 0.01;
+  }
+  if (keyboardState["s"]) {
+    gltf.scene.position.z -= 0.01;
+  }
+  if (keyboardState["a"]) {
+    gltf.scene.rotation.y += 0.01;
+  }
+  if (keyboardState["d"]) {
+    gltf.scene.rotation.y -= 0.01;
+  }
 };
 
 tick();
+
+/* const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas,
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Set up the plane geometry
+const planeGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
+const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x555555 });
+const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+scene.add(planeMesh);
+
+// Set up the cubes on the plane
+const cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+for (let i = 0; i < 50; i++) {
+  const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  cubeMesh.position.x = Math.random() * 80 - 40;
+  cubeMesh.position.z = Math.random() * 80 - 40;
+  scene.add(cubeMesh);
+}
+
+// Set up the initial camera position and lookAt
+camera.position.set(0, 5, 10);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+// Handle keyboard events to move the camera
+const keyboardState = {};
+document.addEventListener("keydown", (event) => {
+  keyboardState[event.key] = true;
+});
+document.addEventListener("keyup", (event) => {
+  keyboardState[event.key] = false;
+});
+
+// Set up mouse event to change camera direction
+const mouseState = {
+  x: 0,
+  y: 0,
+  down: false,
+};
+document.addEventListener("mousemove", (event) => {
+  const movementX = event.movementX || 0;
+  const movementY = event.movementY || 0;
+  if (mouseState.down) {
+    const sensitivity = 0.001;
+    camera.rotation.y -= movementX * sensitivity;
+    camera.rotation.x -= movementY * sensitivity;
+    camera.rotation.x = Math.max(
+      Math.min(camera.rotation.x, Math.PI / 2),
+      -Math.PI / 2
+    );
+  }
+});
+document.addEventListener("mousedown", (event) => {
+  mouseState.down = true;
+});
+document.addEventListener("mouseup", (event) => {
+  mouseState.down = false;
+});
+
+// Render the scene
+function render() {
+  // Update camera position based on keyboard input
+  if (keyboardState["w"]) {
+    camera.position.z -= 0.1;
+  }
+  if (keyboardState["s"]) {
+    camera.position.z += 0.1;
+  }
+  if (keyboardState["a"]) {
+    camera.rotation.y -= 0.01;
+  }
+  if (keyboardState["d"]) {
+    camera.rotation.y += 0.01;
+  }
+
+  // Keep the camera above the plane
+  camera.position.y = Math.max(camera.position.y, 1);
+
+  // Update the camera lookAt to follow its movement
+  //camera.lookAt(camera.position.clone().add(new THREE.Vector3(0, 0, -1)));
+
+  // Render the scene
+  renderer.render(scene, camera);
+
+  requestAnimationFrame(render);
+}
+
+render();
+ */
