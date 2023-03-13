@@ -10,7 +10,7 @@ import typefaceFont from "three/examples/fonts/helvetiker_regular.typeface.json"
  */
 // Debug
 const gui = new dat.GUI();
-let textContent = "null pointer";
+let textContent = "Hello there!";
 let text;
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -43,23 +43,40 @@ const fontLoader = new FontLoader();
 const loadFont = () => {
   fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
     // Material
-    const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+    const frontMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      emissive: 0x00ff00, // set emissive color to green
+      emissiveIntensity: 10, // set emissive intensity to 1
+      shininess: 100,
+      metalness: 1, // set metalness to 1
+      roughness: 0,
+    });
+
+    // 3. Create back material
+    const backMaterial = new THREE.MeshPhongMaterial({
+      color: new THREE.Color("green"),
+      side: THREE.BackSide,
+    });
+
+    // 4. Create mesh
 
     // Text
     const textGeometry = new TextGeometry(textContent, {
       font: font,
       size: 0.5,
-      height: 0,
+      height: 0.05,
       curveSegments: 12,
       bevelEnabled: true,
-      bevelThickness: 0.0,
+      bevelThickness: 0.001,
       bevelSize: 0.02,
       bevelOffset: 0,
       bevelSegments: 5,
     });
     textGeometry.center();
 
-    text = new THREE.Mesh(textGeometry, material);
+    text = new THREE.Mesh(textGeometry, [frontMaterial, backMaterial]);
+    //text.position.set(0, 0, -5);
+    //text = new THREE.Mesh(textGeometry, material);
     scene.add(text);
 
     // Donuts
@@ -100,13 +117,15 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 4;
+camera.position.z = 7;
 scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-
+const light = new THREE.DirectionalLight(0xffffff, 10);
+light.position.set(2, 2, -1);
+scene.add(light);
 /**
  * Renderer
  */
