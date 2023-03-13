@@ -1,64 +1,71 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import typefaceFont from "three/examples/fonts/helvetiker_regular.typeface.json";
 
 /**
  * Base
  */
 // Debug
 const gui = new dat.GUI();
-
+let textContent = "null pointer";
+let text;
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
+const input = document.querySelector(".input");
+const button = document.querySelector(".btn");
+
+button.addEventListener("click", () => {
+  if (input.value) {
+    textContent = input.value;
+    input.value = "";
+    scene.remove(text);
+    loadFont();
+  }
+});
 
 // Scene
 const scene = new THREE.Scene();
 
 /**
- * Floor
+ * Textures
  */
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(100, 100),
-  new THREE.MeshStandardMaterial({
-    color: new THREE.Color("grey"),
-    metalness: 0.8,
-    roughness: 0.5,
-  })
-);
-floor.receiveShadow = true;
-floor.rotation.x = -Math.PI * 0.5;
-scene.add(floor);
-
-const ball = new THREE.Mesh(
-  new THREE.SphereGeometry(3, 50, 50),
-  new THREE.MeshStandardMaterial({
-    color: "#ff0000",
-    metalness: 0.5,
-    roughness: 0.5,
-  })
-);
-ball.receiveShadow = true;
-ball.position.set(0, 2.5, 41);
-//scene.add(ball);
+const textureLoader = new THREE.TextureLoader();
+const matcapTexture = textureLoader.load("textures/matcaps/8.png");
 
 /**
- * Lights
+ * Fonts
  */
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-scene.add(ambientLight);
+const fontLoader = new FontLoader();
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.camera.left = -7;
-directionalLight.shadow.camera.top = 7;
-directionalLight.shadow.camera.right = 7;
-directionalLight.shadow.camera.bottom = -7;
-directionalLight.position.set(5, 5, 5);
-scene.add(directionalLight);
+const loadFont = () => {
+  fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
+    // Material
+    const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
+    // Text
+    const textGeometry = new TextGeometry(textContent, {
+      font: font,
+      size: 0.5,
+      height: 0,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 0.0,
+      bevelSize: 0.02,
+      bevelOffset: 0,
+      bevelSegments: 5,
+    });
+    textGeometry.center();
+
+    text = new THREE.Mesh(textGeometry, material);
+    scene.add(text);
+
+    // Donuts
+  });
+};
+loadFont();
 /**
  * Sizes
  */
@@ -91,12 +98,13 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(2, 6, 50);
+camera.position.x = 0;
+camera.position.y = 0;
+camera.position.z = 4;
 scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
-controls.target.set(0, 0.75, 0);
 controls.enableDamping = true;
 
 /**
@@ -105,29 +113,16 @@ controls.enableDamping = true;
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-const gltfLoader = new GLTFLoader();
-gltfLoader.load("./models/village/lowPloyVillage.glb", (loadedGltf) => {
-  const gltf = loadedGltf;
-  console.log(gltf);
-  gltf.scene.scale.set(1, 1, 1);
-  scene.add(gltf.scene);
-});
 
 /**
  * Animate
  */
 const clock = new THREE.Clock();
-let previousTime = 0;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  const deltaTime = elapsedTime - previousTime;
-  previousTime = elapsedTime;
 
   // Update controls
   controls.update();
