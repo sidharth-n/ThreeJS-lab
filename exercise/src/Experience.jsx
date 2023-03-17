@@ -18,25 +18,30 @@ import * as THREE from "three";
 import { useControls } from "leva";
 
 export default function Experience() {
-  const model = useGLTF("./Fox/glTF/dancingGirl.glb");
+  const model = useGLTF("./Fox/glTF/dancingGirl2.gltf");
   const animations = useAnimations(model.animations, model.scene);
-  console.log(animations.actions["Armature|mixamo.com|Layer0"]);
+  console.log(animations.actions);
 
-  const cube = useRef();
-
-  const { animationName } = useControls("Animation", {
-    animationName: { options: ["Survey", "Walk", "Run"] },
+  const { animationName = "" } = useControls("Animation", {
+    animationName: { options: ["Twerk", "Freeze", "Flair"] },
   });
 
   useEffect(() => {
-    const action = animations.actions["Armature|mixamo.com|Layer0"];
-    action.play();
-  }, []);
+    const action = animations.actions[animationName];
+    action.reset().fadeIn(0.5).play();
+
+    return () => {
+      action.fadeOut(2);
+    };
+  }, [animationName]);
 
   const dirLight = useRef();
 
   useHelper(dirLight, THREE.DirectionalLightHelper, 1);
-  useFrame((state, delta) => {});
+  useFrame((state, delta) => {
+    state.camera.position.x += delta;
+    state.camera.lookAt(-10, 2.4, 0);
+  });
 
   return (
     <>
@@ -44,7 +49,7 @@ export default function Experience() {
         <Environment
           ground={{
             height: 7,
-            radius: 50,
+            radius: 100,
             scale: 100,
           }}
           files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
@@ -91,7 +96,13 @@ export default function Experience() {
         <meshStandardMaterial color="greenyellow" />
       </mesh> */}
       {/*  <Stage> */}
-      <primitive object={model.scene} scale={[5, 5, 5]} receiveShadow />
+      <primitive
+        object={model.scene}
+        scale={[0.04, 0.04, 0.04]}
+        position-y={2.4}
+        position-x={-10}
+        receiveShadow
+      />
       {/*   <Clone
         object={model.scene}
         scale={[0.025, 0.025, 0.025]}
