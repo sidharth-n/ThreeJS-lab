@@ -16,6 +16,7 @@ import { useRef, useEffect } from "react";
 import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { useControls } from "leva";
+import bgm from "./bgm.mp3";
 
 export default function Experience() {
   const model = useGLTF("./Fox/glTF/dancingGirl2.gltf");
@@ -29,7 +30,8 @@ export default function Experience() {
   useEffect(() => {
     const action = animations.actions[animationName];
     action.reset().fadeIn(0.5).play();
-
+    const music = new Audio(bgm);
+    music.play();
     return () => {
       action.fadeOut(2);
     };
@@ -55,7 +57,7 @@ export default function Experience() {
           files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
         />
       }
-      <Perf position="top-left" />
+      {/*  <Perf position="top-left" /> */}
       <OrbitControls makeDefault />
 
       {/*     <directionalLight
