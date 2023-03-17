@@ -18,8 +18,9 @@ import * as THREE from "three";
 import { useControls } from "leva";
 
 export default function Experience() {
-  const model = useGLTF("./Fox/glTF/Fox.gltf");
+  const model = useGLTF("./Fox/glTF/dancingGirl.glb");
   const animations = useAnimations(model.animations, model.scene);
+  console.log(animations.actions["Armature|mixamo.com|Layer0"]);
 
   const cube = useRef();
 
@@ -28,12 +29,9 @@ export default function Experience() {
   });
 
   useEffect(() => {
-    const action = animations.actions[animationName];
-    action.fadeIn(2).play();
-    return () => {
-      action.fadeOut(4).stop();
-    };
-  }, [animationName]);
+    const action = animations.actions["Armature|mixamo.com|Layer0"];
+    action.play();
+  }, []);
 
   const dirLight = useRef();
 
@@ -93,11 +91,7 @@ export default function Experience() {
         <meshStandardMaterial color="greenyellow" />
       </mesh> */}
       {/*  <Stage> */}
-      <primitive
-        object={model.scene}
-        scale={[0.025, 0.025, 0.025]}
-        receiveShadow
-      />
+      <primitive object={model.scene} scale={[5, 5, 5]} receiveShadow />
       {/*   <Clone
         object={model.scene}
         scale={[0.025, 0.025, 0.025]}
