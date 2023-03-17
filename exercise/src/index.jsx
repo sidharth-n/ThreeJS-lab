@@ -8,7 +8,7 @@ import { Leva } from "leva";
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 root.render(
   <StrictMode>
-    <Leva collapsed />
+    {/*     <Leva collapsed /> */}
     <Canvas
       shadows
       camera={{
