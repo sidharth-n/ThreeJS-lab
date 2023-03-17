@@ -6,14 +6,17 @@ import {
   AccumulativeShadows,
   Sky,
   Environment,
+  Stage,
 } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { useRef } from "react";
 import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { useControls } from "leva";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default function Experience() {
+  const model = useLoader(GLTFLoader, "./Fox/glTF/Fox.gltf");
   const cube = useRef();
   const dirLight = useRef();
   const { sunPosition } = useControls("SUN", {
@@ -21,20 +24,18 @@ export default function Experience() {
   });
 
   useHelper(dirLight, THREE.DirectionalLightHelper, 1);
-  useFrame((state, delta) => {
-    cube.current.rotation.y += delta;
-  });
+  useFrame((state, delta) => {});
 
   return (
     <>
-      <Environment
+      {/*       <Environment
         ground={{
           height: 7,
           radius: 50,
           scale: 100,
         }}
         files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
-      />
+      /> */}
       <Perf position="top-left" />
       <OrbitControls makeDefault />
 
@@ -48,7 +49,7 @@ export default function Experience() {
 
       {/*  <Sky sunPosition={sunPosition} /> */}
       {/*   <ambientLight intensity={0.5} /> */}
-
+      {/* 
       <mesh position={[-2, 1, 0]} castShadow>
         <sphereGeometry />
         <meshStandardMaterial />
@@ -63,7 +64,7 @@ export default function Experience() {
       >
         <boxGeometry />
         <meshStandardMaterial color="mediumpurple" />
-      </mesh>
+      </mesh> */}
 
       {/*  <mesh
         receiveShadow
@@ -75,6 +76,13 @@ export default function Experience() {
         <planeGeometry />
         <meshStandardMaterial color="greenyellow" />
       </mesh> */}
+      <Stage>
+        <primitive
+          object={model.scene}
+          scale={[0.025, 0.025, 0.025]}
+          receiveShadow
+        />
+      </Stage>
     </>
   );
 }
