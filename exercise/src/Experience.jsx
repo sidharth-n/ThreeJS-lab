@@ -7,17 +7,30 @@ import {
   Sky,
   Environment,
   Stage,
+  useGLTF,
+  Clone,
+  useAnimations,
 } from "@react-three/drei";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useRef, useEffect } from "react";
 import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { useControls } from "leva";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default function Experience() {
-  const model = useLoader(GLTFLoader, "./Fox/glTF/Fox.gltf");
+  const model = useGLTF("./Fox/glTF/Fox.gltf");
+  const animations = useAnimations(model.animations, model.scene);
+
   const cube = useRef();
+  useEffect(() => {
+    const action = animations.actions.Run;
+    action.play();
+    setTimeout(() => {
+      animations.actions.Walk.play();
+      animations.actions.Walk.crossFadeFrom(animations.actions.Run, 4);
+    }, 4000);
+  }, []);
+
   const dirLight = useRef();
   const { sunPosition } = useControls("SUN", {
     sunPosition: { value: [1, 2, 3] },
@@ -28,14 +41,16 @@ export default function Experience() {
 
   return (
     <>
-      {/*       <Environment
-        ground={{
-          height: 7,
-          radius: 50,
-          scale: 100,
-        }}
-        files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
-      /> */}
+      {
+        <Environment
+          ground={{
+            height: 7,
+            radius: 50,
+            scale: 100,
+          }}
+          files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
+        />
+      }
       <Perf position="top-left" />
       <OrbitControls makeDefault />
 
@@ -76,13 +91,19 @@ export default function Experience() {
         <planeGeometry />
         <meshStandardMaterial color="greenyellow" />
       </mesh> */}
-      <Stage>
-        <primitive
-          object={model.scene}
-          scale={[0.025, 0.025, 0.025]}
-          receiveShadow
-        />
-      </Stage>
+      {/*  <Stage> */}
+      <primitive
+        object={model.scene}
+        scale={[0.025, 0.025, 0.025]}
+        receiveShadow
+      />
+      {/*   <Clone
+        object={model.scene}
+        scale={[0.025, 0.025, 0.025]}
+        receiveShadow
+        position-x={-4}
+      /> */}
+      {/*  </Stage> */}
     </>
   );
 }
