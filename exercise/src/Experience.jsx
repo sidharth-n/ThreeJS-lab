@@ -22,19 +22,20 @@ export default function Experience() {
   const animations = useAnimations(model.animations, model.scene);
 
   const cube = useRef();
+
+  const { animationName } = useControls("Animation", {
+    animationName: { options: ["Survey", "Walk", "Run"] },
+  });
+
   useEffect(() => {
-    const action = animations.actions.Run;
-    action.play();
-    setTimeout(() => {
-      animations.actions.Walk.play();
-      animations.actions.Walk.crossFadeFrom(animations.actions.Run, 4);
-    }, 4000);
-  }, []);
+    const action = animations.actions[animationName];
+    action.fadeIn(2).play();
+    return () => {
+      action.fadeOut(4).stop();
+    };
+  }, [animationName]);
 
   const dirLight = useRef();
-  const { sunPosition } = useControls("SUN", {
-    sunPosition: { value: [1, 2, 3] },
-  });
 
   useHelper(dirLight, THREE.DirectionalLightHelper, 1);
   useFrame((state, delta) => {});
