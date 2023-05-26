@@ -21,6 +21,10 @@ import music from "./bgm.mp3";
 export default function Experience() {
   const model = useGLTF("./iphone2.gltf");
 
+  const { animationName = "" } = useControls("Animation", {
+    animationName: { options: ["000", "Freeze", "Flair"] },
+  });
+
   const dirLight = useRef();
 
   useHelper(dirLight, THREE.DirectionalLightHelper, 1);
@@ -31,25 +35,23 @@ export default function Experience() {
 
   return (
     <>
-      {
-        <Environment
+      {/*   <Environment
           ground={{
             height: 7,
             radius: 100,
             scale: 100,
           }}
           files={"./environmentMaps/studio_small_03_1k.hdr"}
-        />
-      }
+        /> */}
       {/*  <Perf position="top-left" /> */}
 
-      {/*    <directionalLight
+      <directionalLight
         ref={dirLight}
         castShadow
         position={[1, 2, 3]}
         intensity={1.5}
         shadow-mapSize={[1024, 1024]}
-      /> */}
+      />
 
       {/*  <Sky sunPosition={sunPosition} /> */}
       {/*   <ambientLight intensity={0.5} /> */}
@@ -85,8 +87,6 @@ export default function Experience() {
           object={model.scene}
           scale={[1, 1, 1]}
           rotation={[Math.PI / 2, 0, 0]}
-          position-y={0}
-          position-x={0}
           receiveShadow
         />
         {/*   <Clone
