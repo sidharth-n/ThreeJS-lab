@@ -10,6 +10,7 @@ import {
   useGLTF,
   Clone,
   useAnimations,
+  TransformControls,
 } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useEffect } from "react";
@@ -17,11 +18,12 @@ import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { useControls } from "leva";
 import music from "./bgm.mp3";
+//import InfoDisplay from "./infoDisplay";
 
 export default function Experience() {
   const model = useGLTF("./iphone2.gltf");
-
-  const { preset, environment, shadow } = useControls({
+  const spotLight = useRef();
+  const { preset, environment, shadow, extraLight } = useControls({
     preset: { options: ["rembrandt", "soft", "upfront", "portrait"] },
     environment: {
       options: [
@@ -38,6 +40,7 @@ export default function Experience() {
       ],
     },
     shadow: { options: ["contact", "accumulative"] },
+    extraLight: { value: false },
   });
 
   const dirLight = useRef();
@@ -66,6 +69,17 @@ export default function Experience() {
         intensity={1.5}
         shadow-mapSize={[1024, 1024]}
       /> */}
+      {extraLight && (
+        <PivotControls object={spotLight}>
+          <directionalLight
+            ref={spotLight}
+            castShadow
+            position={[0, 0, 0]}
+            intensity={1.5}
+            shadow-mapSize={[1024, 1024]}
+          />
+        </PivotControls>
+      )}
 
       <Stage
         preset={preset}
