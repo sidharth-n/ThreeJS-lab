@@ -38,9 +38,13 @@ export default function Experience() {
     },
     shadow: { options: ["contact", "accumulative"] },
     extraLight: { value: false },
+    model: {
+      value: "./iphone2.gltf",
+      options: ["./iphone.gltf", "./iphone.glb","./iphone2.gltf"],
+    },
   });
 
-  const modelGLTF = useGLTF("./iphone.gltf");
+  const modelGLTF = useGLTF(model);
 
   const spotLight = useRef();
   const dirLight = useRef();
