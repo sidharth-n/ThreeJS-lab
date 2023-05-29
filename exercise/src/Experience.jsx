@@ -6,7 +6,6 @@ import {
   AccumulativeShadows,
   Sky,
   Environment,
-  Stage,
   useGLTF,
   Clone,
   useAnimations,
@@ -18,6 +17,7 @@ import { Perf } from "r3f-perf";
 import * as THREE from "three";
 import { useControls } from "leva";
 import music from "./bgm.mp3";
+import { Stage } from "././CustomStage/Stage";
 
 export default function Experience() {
   const { preset, environment, shadow, extraLight, model } = useControls({
@@ -38,22 +38,28 @@ export default function Experience() {
     },
     shadow: { options: ["contact", "accumulative"] },
     extraLight: { value: false },
-    model: {
-      value: "./iphone2.gltf",
-      options: ["./iphone2.gltf", "./iphone.glb"],
-    },
   });
 
-  const modelGLTF = useGLTF(model);
+  const modelGLTF = useGLTF("./iphone.gltf");
 
   const spotLight = useRef();
   const dirLight = useRef();
 
   useHelper(dirLight, THREE.DirectionalLightHelper, 1);
-  useFrame((state, delta) => {
-    //state.camera.position.x += delta;
-    //state.camera.lookAt(0, 0, 0);
-  });
+  /*   useFrame((state, delta) => {
+    const { camera } = state;
+
+    const angle = Date.now() * 0.0009; // Adjust rotation speed as needed
+    const radius = 0.3; // Adjust distance from the object as needed
+    const objectPosition = new THREE.Vector3(0, 0, 0); // Set the position of the object
+
+    const cameraX = objectPosition.x + Math.cos(angle) * radius;
+    const cameraY = objectPosition.y; // + radius;  // Adjust height of the camera if needed
+    const cameraZ = objectPosition.z + Math.sin(angle) * radius;
+    camera.position.set(cameraX, cameraY, cameraZ);
+
+    camera.lookAt(objectPosition);
+  }); */
 
   return (
     <>
@@ -86,8 +92,8 @@ export default function Experience() {
       >
         <primitive
           object={modelGLTF.scene}
-          scale={[1, 1, 1]}
-          rotation={[Math.PI / 2, 0, 0]}
+          /*   scale={[1, 1, 1]}
+          rotation={[0, 0, 0]} */
           receiveShadow
         />
         <OrbitControls makeDefault />
